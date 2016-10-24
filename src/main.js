@@ -1,71 +1,25 @@
 import Vue from 'vue'
-import Vuetable from './components/Vuetable.vue'
-import VuetablePagination from './components/VuetablePagination.vue'
-import VuetablePaginationDropdown from './components/VuetablePaginationDropdown.vue'
-import VuetablePaginationInfo from './components/VuetablePaginationInfo.vue'
+import Vuetable from './infra/Vuetable.vue'
+import VuetablePagination from './infra/VuetablePagination.vue'
+import VuetablePaginationDropdown from './infra/VuetablePaginationDropdown.vue'
+import VuetablePaginationInfo from './infra/VuetablePaginationInfo.vue'
+import moment from 'moment';
+
+import MyDetailRow from './components/myDetailRow/MyDetailRow.js'
+import CustomActions from './components/customActions/CustomActions.js'
 
 let E_SERVER_ERROR = 'Error communicating with the server'
 
-Vue.component('custom-actions', {
-  template: [
-    '<div>',
-      '<button class="ui red button" @click="onClick(\'view-item\', rowData)"><i class="zoom icon"></i></button>',
-      '<button class="ui blue button" @click="onClick(\'edit-item\', rowData)"><i class="edit icon"></i></button>',
-      '<button class="ui green button" @click="onClick(\'delete-item\', rowData)"><i class="delete icon"></i></button>',
-    '</div>'
-  ].join(''),
-  props: {
-    rowData: {
-      type: Object,
-      required: true
-    }
-  },
-  methods: {
-    onClick: function(action, data) {
-      console.log('actions: on-click', data.name)
-      sweetAlert(action, data.name)
-    },
-  }
-})
+Vue.component('custom-actions', CustomActions)
+Vue.component('my-detail-row', MyDetailRow)
 
-Vue.component('my-detail-row', {
-  template: [
-    '<div @click="onClick">',
-      '<div class="inline field">',
-        '<label>Name: </label>',
-        '<span>{{rowData.name}}</span>',
-      '</div>',
-      '<div class="inline field">',
-        '<label>Email: </label>',
-        '<span>{{rowData.email}}</span>',
-      '</div>',
-      '<div class="inline field">',
-        '<label>Nickname: </label>',
-        '<span>{{rowData.nickname}}</span>',
-      '</div>',
-      '<div class="inline field">',
-        '<label>Birthdate: </label>',
-        '<span>{{rowData.birthdate}}</span>',
-      '</div>',
-      '<div class="inline field">',
-        '<label>Gender: </label>',
-        '<span>{{rowData.gender}}</span>',
-      '</div>',
-    '</div>'
-  ].join(''),
-  props: {
-    rowData: {
-      type: Object,
-      required: true
-    }
-  },
-  methods: {
-    onClick: function(event) {
-      console.log('my-detail-row: on-click', event.target)
-    }
-  },
-})
+function byID(id) {
+  return document.getElementById(id);
+}
 
+function byClass(cl) {
+  return document.getElementsByClassName(cl);
+}
 
 let tableColumns = [
     {
@@ -114,6 +68,7 @@ let vm = new Vue({
     VuetablePagination,
     VuetablePaginationDropdown,
     VuetablePaginationInfo,
+    MyDetailRow,
   },
   data: {
     loading: '',

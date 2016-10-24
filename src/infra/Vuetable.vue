@@ -1,87 +1,5 @@
-<template>
-  <table :class="[{'vuetable': true}, css.tableClass]">
-    <thead>
-      <tr>
-        <template v-for="field in fields">
-          <template v-if="field.visible">
-            <template v-if="isSpecialField(field.name)">
-              <th v-if="extractName(field.name) == '__checkbox'" :class="[field.titleClass || '']">
-                <input type="checkbox" @change="toggleAllCheckboxes(field.name, $event)">
-              </th>
-              <th v-if="extractName(field.name) == '__component'"
-                  @click="orderBy(field, $event)"
-                  :class="[field.titleClass, {'sortable': isSortable(field)}]"
-                  v-html="field.title || ''">
-                  <i v-if="isCurrentSortField(field) && field.title"
-                     :class="sortIcon(field)"
-                     :style="{opacity: sortIconOpacity(field)}"></i>
-              </th>
-              <th v-if="notIn(extractName(field.name), ['__checkbox', '__component'])"
-                  :id="'_' + extractArgs(field.name)" class="[field.titleClass || '']" v-html="field.title || ''">
-              </th>
-            </template>
-            <template v-else>
-              <th @click="orderBy(field, $event)"
-                :id="'_' + field.name"
-                :class="[field.titleClass,  {'sortable': isSortable(field)}]">
-                {{  getTitle(field) }}&nbsp;
-                <i v-if="isCurrentSortField(field)" :class="sortIcon(field)" :style="{opacity: sortIconOpacity(field)}"></i>
-              </th>
-            </template>
-          </template>
-        </template>
-      </tr>
-    </thead>
-    <tbody v-cloak>
-      <template v-for="(item, index) in tableData">
-        <tr @click="onRowClicked(item, $event)" :render="onRowChanged(item)" :class="onRowClass(item, index)">
-          <template v-for="field in fields">
-            <template v-if="field.visible">
-              <template v-if="isSpecialField(field.name)">
-                <td v-if="extractName(field.name) == '__sequence'" :class="[{'vuetable-sequence': true}, field.dataClass]"
-                  v-html="tablePagination.from + index">
-                </td>
-                <td v-if="extractName(field.name) == '__checkbox'" :class="[{'vuetable-checkboxes': true}, field.dataClass]">
-                  <input type="checkbox"
-                    @change="toggleCheckbox(item, field.name, $event)"
-                    :checked="rowSelected(item, field.name)">
-                </td>
-                <td v-if="extractName(field.name) === '__component'" :class="field.dataClass">
-                  <component :is="extractArgs(field.name)" :row-data="item"></component>
-                </td>
-              </template>
-              <template v-else>
-                <td v-if="hasCallback(field)" :class="field.dataClass"
-                  @click="onCellClicked(item, field, $event)"
-                  @dblclick="onCellDoubleClicked(item, field, $event)"
-                  v-html="callCallback(field, item)"
-                >
-                </td>
-                <td v-else :class="field.dataClass"
-                  @click="onCellClicked(item, field, $event)"
-                  @dblclick="onCellDoubleClicked(item, field, $event)"
-                  v-html="getObjectValue(item, field.name, '')"
-                >
-                </td>
-              </template>
-            </template>
-          </template>
-        </tr>
-        <template v-if="useDetailRow">
-          <tr v-if="isVisibleDetailRow(item[detailRowId])"
-            @click="onDetailRowClick(item, $event)"
-            :transition="detailRowTransition"
-            :class="[css.detailRowClass]"
-          >
-            <td :colspan="countVisibleFields">
-              <component :is="detailRowComponent" :row-data="item"></component>
-            </td>
-          </tr>
-        </template>
-      </template>
-    </tbody>
-  </table>
-</template>
+<style src="./Vuetable.style.css"></style>
+<template src="./Vuetable.template.html"></template>
 
 <script>
 import Vue from 'vue'
@@ -219,6 +137,7 @@ export default {
     }
   },
   methods: {
+
     normalizeFields: function() {
       if (typeof(this.fields) === 'undefined') {
         this.warn('You need to provide "fields" prop.')
@@ -251,6 +170,12 @@ export default {
         Vue.set(self.fields, i, obj)
       })
     },
+
+    /**
+      * set title
+      *
+     **/
+
     setTitle: function(str) {
       if (this.isSpecialField(str)) {
         return ''
@@ -672,21 +597,3 @@ export default {
 }
 </script>
 
-<style>
-  .vuetable th.sortable:hover {
-    color: #2185d0;
-    cursor: pointer;
-  }
-  .vuetable-actions {
-    width: 15%;
-    padding: 12px 0px;
-    text-align: center;
-  }
-  .vuetable-pagination {
-    background: #f9fafb !important;
-  }
-  .vuetable-pagination-info {
-    margin-top: auto;
-    margin-bottom: auto;
-  }
-</style>
